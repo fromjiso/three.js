@@ -11,6 +11,10 @@ async function init() {
   // GUI
   const gui = new GUI();
 
+  // 버튼 컬러 배열
+  const colors = ['#ff6e6e', '#31e0c1', '#006fff', '#ffd722'];
+
+
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true,
@@ -34,7 +38,14 @@ async function init() {
   camera.position.set(0, 1, 25);
   
   // OrbitControls
-  new OrbitControls(camera, renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 2.5;
+  controls.rotateSpeed = 0.75;
+  controls.enableDamping = true;
+  controls.enableZoom = false;
+  controls.minPolarAngle = Math.PI / 2 - Math.PI / 3;
+  controls.maxPolarAngle = Math.PI / 2 + Math.PI / 3;
 
 
   // 조명
@@ -56,7 +67,7 @@ async function init() {
     width: 10,
     height: 15.8,
     radius: 0.5,
-    color: '#0077ff',
+    color: colors[0],
   });
 
   scene.add(card.mesh);
@@ -76,10 +87,12 @@ async function init() {
       .step(0.01)
       .name('material.metalness');
 
+  card.mesh.rotation.z = Math.PI * 0.1;
 
   // 렌더
   render();
   function render() {
+    controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(render);
   }
@@ -92,4 +105,18 @@ async function init() {
     renderer.render(scene, camera);
   }
   window.addEventListener('resize', handleResize);
+
+
+
+  // 버튼넣기
+  const container = document.querySelector('.container');
+
+  colors.forEach(color => {
+    const btn = document.createElement('button');
+    btn.style.backgroundColor = color;
+    btn.addEventListener('click', ()=>{
+      card.mesh.material.color = new THREE.Color(color);
+    })
+    container.appendChild(btn);
+  });
 }

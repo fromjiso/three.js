@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'lil-gui';
 import Card from './card-mesh.js';
+import { gsap } from 'gsap';
 
 window.addEventListener('load', function () {
   init();
@@ -116,7 +117,10 @@ async function init() {
     btn.style.backgroundColor = color;
     btn.addEventListener('click', ()=>{
       card.mesh.material.color = new THREE.Color(color);
+      gsap.to(card.mesh.rotation, {y: card.mesh.rotation.y - Math.PI/2, duration: 1, ease: 'back.out(2.5)'});
     })
     container.appendChild(btn);
   });
+
+  gsap.to(card.mesh.rotation, {y: -Math.PI * 4, duration: 2.5, ease: 'back.out(2.5)'});
 }
